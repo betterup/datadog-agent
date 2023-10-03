@@ -1,4 +1,4 @@
-[200~name: datadog-build-scan-push
+name: datadog-build-scan-push
 
 on:
   push:
