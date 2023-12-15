@@ -3,7 +3,7 @@ module github.com/DataDog/datadog-agent/test/fakeintake
 go 1.20
 
 require (
-	github.com/DataDog/agent-payload/v5 v5.0.73
+	github.com/DataDog/agent-payload/v5 v5.0.101
 	github.com/benbjohnson/clock v1.3.5
 	github.com/cenkalti/backoff v2.2.1+incompatible
 	github.com/cenkalti/backoff/v4 v4.2.1
@@ -21,7 +21,7 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/gogo/protobuf v1.0.0 // indirect
+	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
