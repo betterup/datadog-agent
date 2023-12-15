@@ -122,7 +122,7 @@ require (
 	github.com/clbanning/mxj v1.8.4
 	github.com/containerd/containerd v1.7.4
 	github.com/containernetworking/cni v1.1.2
-	github.com/coreos/go-semver v0.3.0
+	github.com/coreos/go-semver v0.3.1
 	github.com/coreos/go-systemd v22.5.0+incompatible
 	github.com/cri-o/ocicni v0.4.0
 	github.com/cyphar/filepath-securejoin v0.2.4
