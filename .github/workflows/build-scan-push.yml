@@ -8,8 +8,8 @@ on:
 env:
   REGISTRY: ghcr.io
   AGENT_VERSION: 7.49.1
-  CLUSTER_AGENT_IMAGE_NAME: "${{ github.repository }}/datadog-cluster-agent"
-  AGENT_IMAGE_NAME: "${{ github.repository }}/datadog-agent"
+  CLUSTER_AGENT_IMAGE_NAME: "${{ github.repository }}/datadog-cluster-agent:7.49.1-GOV"
+  AGENT_IMAGE_NAME: "${{ github.repository }}/datadog-agent:7.49.1-GOV"
 
 jobs:
   build-and-scan:
@@ -49,13 +49,13 @@ jobs:
 
     - name: Build datadog agent
       run: |
-        docker pull gcr.io/datadoghq/agent:${{ env.AGENT_VERSION }}
-        docker tag gcr.io/datadoghq/agent:${{ env.AGENT_VERSION }} $AGENT_IMAGE_NAME:${{ env.AGENT_VERSION }}
+        docker pull gcr.io/datadoghq/agent:$AGENT_VERSION
+        docker tag gcr.io/datadoghq/agent:$AGENT_VERSION $AGENT_IMAGE_NAME
 
     - name: Build datadog cluster agent
       run: |
-        docker pull gcr.io/datadoghq/cluster-agent:${{ env.AGENT_VERSION }}
-        docker tag gcr.io/datadoghq/cluster-agent:${{ env.AGENT_VERSION }} $CLUSTER_AGENT_IMAGE_NAME:${{ env.AGENT_VERSION }}+GOV
+        docker pull gcr.io/datadoghq/cluster-agent:$AGENT_VERSION
+        docker tag gcr.io/datadoghq/cluster-agent:$AGENT_VERSION $CLUSTER_AGENT_IMAGE_NAME
 
 
     - name: Prisma Cloud image scan agent
@@ -65,7 +65,7 @@ jobs:
         pcc_console_url: ${{ secrets.PCC_CONSOLE_URL }}
         pcc_user: ${{ secrets.PCC_USER }}
         pcc_pass: ${{ secrets.PCC_PASS }}
-        image_name: ${{ env.AGENT_IMAGE_NAME }}:${{ env.AGENT_VERSION }}
+        image_name: ${{ env.AGENT_IMAGE_NAME }}
 
     - name: Prisma Cloud image scan cluster-agent
       id: scan-cluster-agent
@@ -74,26 +74,26 @@ jobs:
         pcc_console_url: ${{ secrets.PCC_CONSOLE_URL }}
         pcc_user: ${{ secrets.PCC_USER }}
         pcc_pass: ${{ secrets.PCC_PASS }}
-        image_name: ${{ env.CLUSTER_AGENT_IMAGE_NAME }}:${{ env.AGENT_VERSION }}
+        image_name: ${{ env.CLUSTER_AGENT_IMAGE_NAME }}
 
     - name: Install Cosign
       uses: sigstore/cosign-installer@main
 
     - name: Push agent to ghcr.io
       run: |
-        docker tag $AGENT_IMAGE_NAME:${{ env.AGENT_VERSION }} ${{ env.REGISTRY }}/${{ env.AGENT_IMAGE_NAME }}
+        docker tag $AGENT_IMAGE_NAME  ${{ env.REGISTRY }}/${{ env.AGENT_IMAGE_NAME }}
         docker push ${{ env.REGISTRY }}/${{ env.AGENT_IMAGE_NAME }}
 
     - name: Push cluster-agent to ghcr.io
       run: |
-        docker tag $CLUSTER_AGENT_IMAGE_NAME:${{ env.AGENT_VERSION }} ${{ env.REGISTRY }}/${{ env.CLUSTER_AGENT_IMAGE_NAME }}:${{ env.AGENT_VERSION }}
-        docker push ${{ env.REGISTRY }}/${{ env.CLUSTER_AGENT_IMAGE_NAME }}:${{ env.AGENT_VERSION }}
+        docker tag $CLUSTER_AGENT_IMAGE_NAME  ${{ env.REGISTRY }}/${{ env.CLUSTER_AGENT_IMAGE_NAME }}
+        docker push ${{ env.REGISTRY }}/${{ env.CLUSTER_AGENT_IMAGE_NAME }}
 
     - name: Sign agent image with a key
       run: |
         cosign sign --key env://COSIGN_PRIVATE_KEY ${TAGS}
       env:
-        TAGS: ghcr.io/${{ env.AGENT_IMAGE_NAME }}:${{ env.AGENT_VERSION }}
+        TAGS: ghcr.io/${{ env.AGENT_IMAGE_NAME }}
         COSIGN_PRIVATE_KEY: ${{secrets.COSIGN_PRIVATE_KEY}}
         COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
 
@@ -101,6 +101,6 @@ jobs:
       run: |
         cosign sign --key env://COSIGN_PRIVATE_KEY ${TAGS}
       env:
-        TAGS: ghcr.io/${{ env.CLUSTER_AGENT_IMAGE_NAME }}:${{ env.AGENT_VERSION }}
+        TAGS: ghcr.io/${{ env.CLUSTER_AGENT_IMAGE_NAME }}
         COSIGN_PRIVATE_KEY: ${{secrets.COSIGN_PRIVATE_KEY}}
         COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
