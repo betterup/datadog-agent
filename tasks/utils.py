@@ -179,6 +179,9 @@ def get_build_flags(
         env['LD_LIBRARY_PATH'] = os.environ.get('LD_LIBRARY_PATH', '') + f":{':'.join(rtloader_lib)}"  # linux
         env['CGO_LDFLAGS'] = os.environ.get('CGO_LDFLAGS', '') + f" -L{' -L '.join(rtloader_lib)}"
 
+    if sys.platform == 'win32':
+        env['CGO_LDFLAGS'] = os.environ.get('CGO_LDFLAGS', '') + ' -Wl,--allow-multiple-definition'
+
     extra_cgo_flags = " -Werror -Wno-deprecated-declarations"
     if rtloader_headers:
         extra_cgo_flags += f" -I{rtloader_headers}"
@@ -371,13 +374,14 @@ def cache_version(ctx, git_sha_length=7, prefix=None):
 
 def get_version(
     ctx,
-    include_git=False,
     url_safe=False,
     git_sha_length=7,
     prefix=None,
     major_version='7',
     include_pipeline_id=False,
     pipeline_id=None,
+    include_git=False,
+    include_pre=True,
 ):
     version = ""
     if pipeline_id is None:
@@ -402,7 +406,7 @@ def get_version(
             # Dev's versions behave the same as nightly
             is_nightly = cache_data["nightly"] or cache_data["dev"]
 
-            if pre:
+            if pre and include_pre:
                 version = f"{version}-{pre}"
     except (IOError, json.JSONDecodeError, IndexError) as e:
         # If a cache file is found but corrupted we ignore it.
@@ -410,7 +414,9 @@ def get_version(
         version = ""
     # If we didn't load the cache
     if not version:
-        print("[WARN] Agent version cache file hasn't been loaded !", file=sys.stderr)
+        if pipeline_id:
+            # only log this warning in CI
+            print("[WARN] Agent version cache file hasn't been loaded !", file=sys.stderr)
         # we only need the git info for the non omnibus builds, omnibus includes all this information by default
         version, pre, commits_since_version, git_sha, pipeline_id = query_version(
             ctx, git_sha_length, prefix, major_version_hint=major_version
@@ -418,7 +424,7 @@ def get_version(
         # Dev's versions behave the same as nightly
         bucket_branch = os.getenv("BUCKET_BRANCH")
         is_nightly = is_allowed_repo_nightly_branch(bucket_branch) or bucket_branch == "dev"
-        if pre:
+        if pre and include_pre:
             version = f"{version}-{pre}"
 
     if not commits_since_version and is_nightly and include_git:
