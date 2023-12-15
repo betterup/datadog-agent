@@ -7,9 +7,9 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  CLUSTER_AGENT_IMAGE_NAME: "${{ github.repository }}/datadog-cluster-agent:${{ github.sha }}-GOV"
-  AGENT_IMAGE_NAME: "${{ github.repository }}/datadog-agent:${{ github.sha }}-GOV"
-  AGENT_VERSION: 7.49.0
+  AGENT_VERSION: 7.49.1
+  CLUSTER_AGENT_IMAGE_NAME: "${{ github.repository }}/datadog-cluster-agent:${{env.AGENT_VERSION}}+GOV"
+  AGENT_IMAGE_NAME: "${{ github.repository }}/datadog-agent:${{env.AGENT_VERSION}}+GOV"
 
 jobs:
   build-and-scan:
