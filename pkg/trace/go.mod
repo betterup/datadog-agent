@@ -32,7 +32,7 @@ require (
 	github.com/tinylib/msgp v1.1.8
 	github.com/vmihailenco/msgpack/v4 v4.3.12
 	go.opentelemetry.io/collector/pdata v1.0.0-rcv0017
-	go.opentelemetry.io/collector/semconv v0.88.0
+	go.opentelemetry.io/collector/semconv v0.91.0
 	go.uber.org/atomic v1.11.0
 	golang.org/x/sys v0.15.0
 	golang.org/x/time v0.3.0
