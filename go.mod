@@ -92,7 +92,7 @@ require (
 	github.com/DataDog/ebpf-manager v0.3.9
 	github.com/DataDog/gopsutil v1.2.2
 	github.com/DataDog/nikos v1.12.1
-	github.com/DataDog/opentelemetry-mapping-go/pkg/otlp/attributes v0.8.1
+	github.com/DataDog/opentelemetry-mapping-go/pkg/otlp/attributes v0.10.0
 	github.com/DataDog/opentelemetry-mapping-go/pkg/otlp/metrics v0.8.0
 	github.com/DataDog/opentelemetry-mapping-go/pkg/quantile v0.8.0
 	github.com/DataDog/sketches-go v1.4.2
@@ -226,7 +226,7 @@ require (
 	go.opentelemetry.io/collector/exporter v0.87.0
 	go.opentelemetry.io/collector/exporter/loggingexporter v0.87.0
 	go.opentelemetry.io/collector/exporter/otlpexporter v0.87.0
-	go.opentelemetry.io/collector/pdata v1.0.0-rcv0017
+	go.opentelemetry.io/collector/pdata v1.0.0
 	go.opentelemetry.io/collector/processor/batchprocessor v0.87.0
 	go.opentelemetry.io/collector/receiver v0.87.0
 	go.opentelemetry.io/collector/receiver/otlpreceiver v0.87.0
@@ -538,7 +538,7 @@ require (
 	go.opencensus.io v0.24.0 // indirect
 	go.opentelemetry.io/collector/consumer v0.87.0
 	go.opentelemetry.io/collector/featuregate v1.0.0-rcv0016 // indirect
-	go.opentelemetry.io/collector/semconv v0.88.0 // indirect
+	go.opentelemetry.io/collector/semconv v0.90.1 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.46.0 // indirect
 	go.opentelemetry.io/contrib/propagators/b3 v1.20.0 // indirect
 	go.opentelemetry.io/otel v1.20.0 // indirect
