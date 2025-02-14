@@ -1,13 +1,13 @@
 name: Update Datadog Agent Version
 
-permissions:
-  pull-requests: write
-  contents: write
-
 on:
   schedule:
     - cron: '0 4 * * 1'  # Run every Monday at 4 AM
   workflow_dispatch:  # Allow manual triggering
+
+permissions:
+  pull-requests: write
+  contents: write
 
 jobs:
   update-agent-version:
@@ -18,6 +18,11 @@ jobs:
       new_version: ${{ steps.datadog-version.outputs.LATEST_VERSION }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Checkout main branch
+        run: git checkout main
 
       - name: Get latest Datadog agent version
         id: datadog-version
@@ -29,7 +34,7 @@ jobs:
         id: create-pr
         uses: fjogeleit/yaml-update-action@main
         with:
-          token: ${{ github.token }}
+          token: ${{ secrets.GITHUB_PAT }}
           valueFile: '.github/workflows/build-scan-push.yml'
           propertyPath: 'env.AGENT_VERSION'
           value: ${{ steps.datadog-version.outputs.LATEST_VERSION }}
@@ -39,6 +44,18 @@ jobs:
           message: 'Update Datadog Agent Version to ${{ steps.datadog-version.outputs.LATEST_VERSION }}'
           title: 'Update Datadog Agent Version'
           description: 'This PR updates the Datadog Agent version to the latest release.'
+        continue-on-error: true
+
+      - name: Print error
+        if: failure() && steps.create-pr.outcome == 'failure'
+        run: |
+          echo "Error occurred: ${{ steps.create-pr.outputs.error }}"
+
+      - name: Debug output
+        run: |
+          echo "PR Created: ${{ steps.create-pr.outputs.pull-request-created }}"
+          echo "PR URL: ${{ steps.create-pr.outputs.pull-request-url }}"
+          echo "New Version: ${{ steps.datadog-version.outputs.LATEST_VERSION }}"
 
   create-jira-and-notify:
     needs: update-agent-version
@@ -70,3 +87,4 @@ jobs:
           channel: your-slack-channel
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
