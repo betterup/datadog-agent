@@ -4,7 +4,6 @@ permissions:
   pull-requests: write
   contents: write
 
-
 on:
   schedule:
     - cron: '0 4 * * 1'  # Run every Monday at 4 AM
@@ -69,7 +68,6 @@ jobs:
             A Jira ticket has been created for review.
           channel: your-slack-channel
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
 env:
