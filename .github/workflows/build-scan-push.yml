@@ -9,8 +9,8 @@ name: datadog-build-scan-push
 env:
   REGISTRY: ghcr.io
   AGENT_VERSION: 7.62.3
-  AGENT_IMAGE_NAME: betterup/datadog-agent
-  CLUSTER_AGENT_IMAGE_NAME: betterup/datadog-cluster-agent
+  AGENT_IMAGE_NAME: betterup/datadog-agent/datadog-agent
+  CLUSTER_AGENT_IMAGE_NAME: betterup/datadog-agent/datadog-cluster-agent
 
 jobs:
   build-and-scan:
