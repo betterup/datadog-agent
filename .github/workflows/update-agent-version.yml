@@ -39,7 +39,7 @@ jobs:
           propertyPath: 'env.AGENT_VERSION'
           value: ${{ steps.datadog-version.outputs.LATEST_VERSION }}
           branch: update-datadog-agent-version
-          targetBranch: main
+          targetBranch: versioning
           createPR: 'true'
           message: 'Update Datadog Agent Version to ${{ steps.datadog-version.outputs.LATEST_VERSION }}'
           title: 'Update Datadog Agent Version'
