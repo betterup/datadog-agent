@@ -53,7 +53,7 @@ jobs:
           pcc_console_url: ${{ secrets.PCC_CONSOLE_URL }}
           pcc_user: ${{ secrets.PCC_USER }}
           pcc_pass: ${{ secrets.PCC_PASS }}
-          image_name: ${{ env.AGENT_IMAGE_NAME }}
+          image_name: ${{ env.AGENT_IMAGE_NAME }}-${{ env.AGENT_VERSION }}-GOV
       - name: Prisma Cloud image scan cluster-agent
         id: scan-cluster-agent
         uses: PaloAltoNetworks/prisma-cloud-scan@v1
@@ -61,7 +61,7 @@ jobs:
           pcc_console_url: ${{ secrets.PCC_CONSOLE_URL }}
           pcc_user: ${{ secrets.PCC_USER }}
           pcc_pass: ${{ secrets.PCC_PASS }}
-          image_name: ${{ env.CLUSTER_AGENT_IMAGE_NAME }}
+          image_name: ${{ env.CLUSTER_AGENT_IMAGE_NAME }}-${{ env.AGENT_VERSION }}-GOV
       - name: Install Cosign
         uses: sigstore/cosign-installer@main
       - name: Push agent to ghcr.io
