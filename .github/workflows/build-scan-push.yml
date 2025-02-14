@@ -6,8 +6,8 @@ name: datadog-build-scan-push
 env:
   REGISTRY: ghcr.io
   AGENT_VERSION: 7.62.3
-  CLUSTER_AGENT_IMAGE_NAME: ${{ github.repository }}/datadog-cluster-agent:${{ github.sha }}-${{ env.AGENT_VERSION }}-GOV
-  AGENT_IMAGE_NAME: ${{ github.repository }}/datadog-agent:${{ github.sha }}-${{ env.AGENT_VERSION }}-GOV
+  CLUSTER_AGENT_IMAGE_NAME: ${{ github.repository }}/datadog-cluster-agent:${{ github.sha }}
+  AGENT_IMAGE_NAME: ${{ github.repository }}/datadog-agent:${{ github.sha }}
 jobs:
   build-and-scan:
     runs-on: ubuntu-latest
@@ -66,12 +66,12 @@ jobs:
         uses: sigstore/cosign-installer@main
       - name: Push agent to ghcr.io
         run: |
-          docker tag $AGENT_IMAGE_NAME  ${{ env.REGISTRY }}/${{ env.AGENT_IMAGE_NAME }}
-          docker push ${{ env.REGISTRY }}/${{ env.AGENT_IMAGE_NAME }}
+          docker tag $AGENT_IMAGE_NAME  ${{ env.REGISTRY }}/${{ env.AGENT_IMAGE_NAME }}-${{ env.AGENT_VERSION }}-GOV
+          docker push ${{ env.REGISTRY }}/${{ env.AGENT_IMAGE_NAME }}-${{ env.AGENT_VERSION }}-GOV
       - name: Push cluster-agent to ghcr.io
         run: |
-          docker tag $CLUSTER_AGENT_IMAGE_NAME  ${{ env.REGISTRY }}/${{ env.CLUSTER_AGENT_IMAGE_NAME }}
-          docker push ${{ env.REGISTRY }}/${{ env.CLUSTER_AGENT_IMAGE_NAME }}
+          docker tag $CLUSTER_AGENT_IMAGE_NAME  ${{ env.REGISTRY }}/${{ env.CLUSTER_AGENT_IMAGE_NAME }}-${{ env.AGENT_VERSION }}-GOV
+          docker push ${{ env.REGISTRY }}/${{ env.CLUSTER_AGENT_IMAGE_NAME }}-${{ env.AGENT_VERSION }}-GOV
       - name: Sign agent image with a key
         run: |
           cosign sign --key env://COSIGN_PRIVATE_KEY ${TAGS}
