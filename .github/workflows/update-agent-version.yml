@@ -29,6 +29,7 @@ jobs:
         id: create-pr
         uses: fjogeleit/yaml-update-action@main
         with:
+          token: ${{ github.token }}
           valueFile: '.github/workflows/build-scan-push.yml'
           propertyPath: 'env.AGENT_VERSION'
           value: ${{ steps.datadog-version.outputs.LATEST_VERSION }}
@@ -69,6 +70,3 @@ jobs:
           channel: your-slack-channel
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
