@@ -1,0 +1,71 @@
+name: Update Datadog Agent Version
+
+on:
+  schedule:
+    - cron: '0 4 * * 1'  # Run every Monday at 4 AM
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  update-agent-version:
+    runs-on: ubuntu-latest
+    outputs:
+      pr_created: ${{ steps.create-pr.outputs.pull-request-created }}
+      pr_url: ${{ steps.create-pr.outputs.pull-request-url }}
+      new_version: ${{ steps.datadog-version.outputs.LATEST_VERSION }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Get latest Datadog agent version
+        id: datadog-version
+        run: |
+          LATEST_VERSION=$(curl -s https://api.github.com/repos/DataDog/datadog-agent/releases/latest | jq -r .tag_name | sed 's/^v//')
+          echo "LATEST_VERSION=${LATEST_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Update YAML file
+        id: create-pr
+        uses: fjogeleit/yaml-update-action@main
+        with:
+          valueFile: '.github/workflows/build-scan-push.yml'
+          propertyPath: 'env.AGENT_VERSION'
+          value: ${{ steps.datadog-version.outputs.LATEST_VERSION }}
+          branch: update-datadog-agent-version
+          targetBranch: main
+          createPR: 'true'
+          message: 'Update Datadog Agent Version to ${{ steps.datadog-version.outputs.LATEST_VERSION }}'
+          title: 'Update Datadog Agent Version'
+          description: 'This PR updates the Datadog Agent version to the latest release.'
+
+  create-jira-and-notify:
+    needs: update-agent-version
+    if: needs.update-agent-version.outputs.pr_created == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Jira ticket
+        uses: atlassian/gajira-create@v3
+        with:
+          project: GFSB
+          issuetype: Task
+          summary: "Update Datadog agent to ${{ needs.update-agent-version.outputs.new_version }}"
+          description: |
+            A new Datadog agent version is available. Please review and approve the update.
+            Pull Request: ${{ needs.update-agent-version.outputs.pr_url }}
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+      - name: Send Slack notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: |
+            New Datadog agent version ${{ needs.update-agent-version.outputs.new_version }} is available.
+            A pull request has been created: ${{ needs.update-agent-version.outputs.pr_url }}
+            A Jira ticket has been created for review.
+          channel: your-slack-channel
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
